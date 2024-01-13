@@ -4,16 +4,19 @@ import pandas as pd
 from functions import get_photo_date_taken
 import shutil
 import os
+from pathlib import Path
 
 # -- Constants
-RELEVANT_EXTENSIONS = [".heic", ".jpg"]
-DIRECTORY_PHOTOS = "."
+RELEVANT_EXTENSIONS = ["heic", "jpg"]
+DIRECTORY_PHOTOS = "D:/iCloud/Photos/Shared"
 
 # -- 1. Get files and filter for relevant extensions
-list_files = os.listdir(".")
-list_relevant_files = [
-    f for f in list_files if any(ext in f for ext in RELEVANT_EXTENSIONS)
-]
+path_files = Path(DIRECTORY_PHOTOS)
+
+list_relevant_files = []
+for ext in RELEVANT_EXTENSIONS:
+    paths = [*path_files.glob(f"**/*.{ext}")]
+    list_relevant_files.extend(paths)
 
 # -- 2. Loop, store data
 list_data = []

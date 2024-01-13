@@ -1,15 +1,16 @@
 import datetime
 import subprocess
 from PIL import Image
+from pathlib import Path
 
 
 class DateNotFoundException(Exception):
     pass
 
 
-def get_photo_date_taken_heic(filepath):
+def get_photo_date_taken_heic(path_file: Path):
     """Gets the date taken for a photo through a shell."""
-    cmd = "mdls '%s'" % filepath
+    cmd = "mdls '%s'" % path_file
     output = subprocess.check_output(cmd, shell=True)
     lines = output.decode("ascii").split("\n")
     for l in lines:
@@ -19,13 +20,14 @@ def get_photo_date_taken_heic(filepath):
                 datetime_str, "%Y-%m-%d %H:%M:%S +0000"
             )
             return datetime_datetime
-    raise DateNotFoundException(f"No EXIF date taken found for file {filepath}")
+    raise DateNotFoundException(f"No EXIF date taken found for file {path_file}")
 
 
-def get_photo_date_taken_jpg(filepath):
-    exif = Image.open(filepath)._getexif()
+def get_photo_date_taken_jpg(path_file: Path):
+    path_str = str(path_file)
+    exif = Image.open(path_str)._getexif()
     if not exif:
-        raise Exception(f"Image {filepath} does not have EXIF data.")
+        raise Exception(f"Image {path_str} does not have EXIF data.")
     return exif[36867]
 
 
